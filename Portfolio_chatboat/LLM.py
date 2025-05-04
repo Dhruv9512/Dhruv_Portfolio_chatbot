@@ -22,7 +22,8 @@ model = ChatGoogleGenerativeAI(
 )
 
 # Initialize QA Chain
-qa_chain = load_qa_chain(llm=model, chain_type="stuff")
+def get_chain():
+    return load_qa_chain(llm=model, chain_type="stuff")
 
 # Function: Generate vector for user input using Hugging Face API
 def embed_query(text):
@@ -201,6 +202,7 @@ def chat_bot(user_input):
         query_docs = [Document(page_content=str(hit.payload)) for hit in query_results]
 
         # Run Gemini QA chain using the invoke method
+        qa_chain = get_chain()
         response = qa_chain.invoke({
             "input_documents": query_docs,
             "question": user_input  
