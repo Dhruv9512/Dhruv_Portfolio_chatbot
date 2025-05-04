@@ -3,7 +3,7 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 import requests
 from django.http import JsonResponse
-
+from .LLM import chat_bot
 # Cheat API view
 @csrf_exempt
 def cheatapi(request):
@@ -15,7 +15,7 @@ def cheatapi(request):
             print("Received Message:", message)  # ✅ Debug print
 
             # Chat with the bot
-            response = "Under construction"
+            response = chat_bot(message)
             print("API Response:", response)  # ✅ Debug print
            
             return JsonResponse({'response': response})
