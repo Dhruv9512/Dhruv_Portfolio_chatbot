@@ -1,0 +1,6 @@
+langchain
+langchain-google-genai
+qdrant-client
+sentence-transformers
+django-redis
+spacy
