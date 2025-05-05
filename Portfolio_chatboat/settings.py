@@ -1,11 +1,8 @@
 from pathlib import Path
+from corsheaders.defaults import default_headers
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = "django-insecure-6=6qqqefe8z@8_id2iw1t%8pb_@6q7q_ypd5+je11tn7jvgwhr"
@@ -14,15 +11,13 @@ SECRET_KEY = "django-insecure-6=6qqqefe8z@8_id2iw1t%8pb_@6q7q_ypd5+je11tn7jvgwhr
 DEBUG = False
 
 ALLOWED_HOSTS = [
-    'dhruv-portfolio-chatbot.onrender.com',  # Your backend
-    'dhruv-portfolio-f5ux.onrender.com',    # Your frontend
-    'localhost', 
+    'dhruv-portfolio-chatbot.onrender.com',  # Backend
+    'dhruv-portfolio-f5ux.onrender.com',     # Frontend
+    'localhost',
     '127.0.0.1',
 ]
 
-
 # Application definition
-
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -34,6 +29,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',  # Must be first!
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -41,21 +37,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    'corsheaders.middleware.CorsMiddleware',  # CORS middleware
 ]
-
-# CORS settings
-CORS_ALLOW_ALL_ORIGINS = False  # Disable this, since we are using CORS_ALLOWED_ORIGINS
-
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:8000",  # Local development
-    "http://127.0.0.1:8000",  # Local development
-    "https://dhruv-portfolio-f5ux.onrender.com",  # Production frontend
-    "https://dhruv-portfolio-chatbot.onrender.com",  # Your API backend
-]
-
-CORS_ALLOW_CREDENTIALS = True  # If you're using cookies/sessions
-
 
 ROOT_URLCONF = "Portfolio_chatboat.urls"
 
@@ -77,10 +59,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "Portfolio_chatboat.wsgi.application"
 
-
 # Database
-# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
@@ -88,44 +67,53 @@ DATABASES = {
     }
 }
 
-
 # Password validation
-# https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
-    },
+    {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
+    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
+    {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
+    {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 
-
 # Internationalization
-# https://docs.djangoproject.com/en/5.1/topics/i18n/
-
 LANGUAGE_CODE = "en-us"
-
 TIME_ZONE = "UTC"
-
 USE_I18N = True
-
 USE_TZ = True
 
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.1/howto/static-files/
-
+# Static files
 STATIC_URL = "static/"
 
 # Default primary key field type
-# https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
-
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# ------------------------
+# ✅ CORS Configuration
+# ------------------------
+
+CORS_ALLOW_ALL_ORIGINS = False
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
+    "https://dhruv-portfolio-f5ux.onrender.com",  # Frontend
+]
+
+CORS_ALLOW_CREDENTIALS = True
+
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    'X-CSRFToken',
+]
+
+CORS_EXPOSE_HEADERS = ['Content-Type', 'X-CSRFToken']
+
+# ------------------------
+# ✅ CSRF Configuration
+# ------------------------
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://dhruv-portfolio-f5ux.onrender.com",
+]
+
+CSRF_COOKIE_SECURE = True
+CSRF_COOKIE_SAMESITE = 'Lax'
