@@ -4,12 +4,13 @@ import requests
 import time
 from dotenv import load_dotenv
 from django.core.cache import cache
-
+from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.schema import HumanMessage, AIMessage, SystemMessage, Document
 from langchain.memory import ConversationSummaryMemory
 from langchain.chains.question_answering import load_qa_chain
 from qdrant_client import QdrantClient
+import pickle  
 
 # Load environment variables
 load_dotenv()
@@ -26,39 +27,55 @@ def get_chain():
     return load_qa_chain(llm=model, chain_type="stuff")
 
 # Function: Generate vector for user input using Hugging Face API
+# ✅ Load or initialize cache
+CACHE_FILE = "embedding_cache.pkl"
+if os.path.exists(CACHE_FILE):
+    with open(CACHE_FILE, "rb") as f:
+        embedding_cache = pickle.load(f)
+else:
+    embedding_cache = {}
+
+def clean_text(text):
+    """Normalize the text to avoid duplicate embeddings."""
+    return text.lower().strip()
+
 def embed_query(text):
-    HF_API_KEY = os.environ.get("HF_API_KEY")
-    headers = {"Authorization": f"Bearer {HF_API_KEY}"}
-    url = "https://api-inference.huggingface.co/pipeline/feature-extraction/sentence-transformers/all-mpnet-base-v2"
+    normalized_text = clean_text(text)
 
-    for attempt in range(5):  # Retry logic for 503 errors
+    # ✅ Check if embedding is already cached
+    if normalized_text in embedding_cache:
+        return embedding_cache[normalized_text]
+
+    # 🔄 Retry logic for transient errors
+    for attempt in range(5):
         try:
-            response = requests.post(url, headers=headers, json={"inputs": text}, timeout=10)
-            response.raise_for_status()
-            embedding = response.json()
-            if isinstance(embedding[0], list):
-                embedding = [sum(col) / len(col) for col in zip(*embedding)]
-            return embedding
-        except requests.exceptions.RequestException as e:
-            print(f"[Attempt {attempt+1}] ❌ Embedding Error: {e}")
-            if response.status_code in [500, 503]:
-                time.sleep(2)  # Wait and retry
-            else:
-                break
-        except Exception as e:
-            print("❌ Failed to parse embedding:", e)
-            break
+        
+            embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
+            response = embeddings.embed_query(normalized_text)
+            embedding = response
+            embedding_cache[normalized_text] = embedding  # ✅ Cache it
 
-    # Fallback: Return a zero vector if embedding generation fails
+            # Save the cache periodically (e.g., every 10 embeddings)
+            if len(embedding_cache) % 10 == 0:
+                with open(CACHE_FILE, "wb") as f:
+                    pickle.dump(embedding_cache, f)
+
+
+            return embedding
+        except Exception as e:
+            print(f"[Attempt {attempt + 1}] ❌ Embedding Error:", e)
+            time.sleep(2)
+
     print("❌ Embedding generation failed. Returning a zero vector as fallback.")
-    return [0.0] * 768
+    return None
+
 
 # Function: Get similar answers using Qdrant
 def get_similar_ans(query, k=5):
     collection_name = "my_collection"
     client = QdrantClient(
-        url=os.environ.get("QDRANT_URL"),
-        api_key=os.environ.get("QDRANT_API_KEY")
+        url=os.getenv("QDRANT_URL"),
+        api_key=os.getenv("QDRANT_API_KEY")
     )
 
     query_embedding = embed_query(query)
