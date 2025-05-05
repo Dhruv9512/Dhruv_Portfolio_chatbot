@@ -1,5 +1,6 @@
 import os
 import pickle
+from django.http import JsonResponse
 import requests
 import time
 from dotenv import load_dotenv
@@ -241,8 +242,8 @@ def chat_bot(user_input):
         # Save memory after processing
         save_memory(memory)
 
-        return response_text
+        return JsonResponse({"response": response_text})
 
     except Exception as e:
         print(f"Error in chat_bot: {e}")
-        return "Something went wrong while processing your request."
+        return JsonResponse({"response": "Internal server error."}, status=500)
