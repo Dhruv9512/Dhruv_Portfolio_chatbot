@@ -1,7 +1,7 @@
 from pathlib import Path
 from corsheaders.defaults import default_headers
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+# Build paths inside the project like this: BASE_DIR / 'subdir'
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
@@ -29,11 +29,11 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',  # Must be first!
+    'corsheaders.middleware.CorsMiddleware',  # CORS middleware should be first!
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
-    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",  # Keep CSRF middleware for other views
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
@@ -59,7 +59,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "Portfolio_chatboat.wsgi.application"
 
-# Database
+# Database configuration
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
@@ -94,26 +94,56 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 CORS_ALLOW_ALL_ORIGINS = False
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:8000",
-    "http://127.0.0.1:8000",
-    "https://dhruv-portfolio-f5ux.onrender.com",  # Frontend
+    "http://localhost:8000",  # Local development frontend
+    "http://127.0.0.1:8000",  # Local development frontend
+    "https://dhruv-portfolio-f5ux.onrender.com",  # Frontend hosted on Render
 ]
 
 CORS_ALLOW_CREDENTIALS = True
 
+# Add headers for CORS requests
 CORS_ALLOW_HEADERS = list(default_headers) + [
     'X-CSRFToken',
 ]
 
+# Expose headers to frontend
 CORS_EXPOSE_HEADERS = ['Content-Type', 'X-CSRFToken']
 
 # ------------------------
 # ✅ CSRF Configuration
 # ------------------------
 
+# Trusted origins for CSRF (used when sending cookies for cross-origin requests)
 CSRF_TRUSTED_ORIGINS = [
-    "https://dhruv-portfolio-f5ux.onrender.com",
+    "https://dhruv-portfolio-f5ux.onrender.com",  # Frontend hosted on Render
 ]
 
+# CSRF settings (optional if you use `@csrf_exempt` on your API)
 CSRF_COOKIE_SECURE = True
 CSRF_COOKIE_SAMESITE = 'Lax'
+
+# ------------------------
+# ✅ Django Security Configuration
+# ------------------------
+
+# To protect against clickjacking
+X_FRAME_OPTIONS = 'DENY'
+
+# To use secure cookies (recommended in production)
+SECURE_SSL_REDIRECT = True
+
+# Default settings for secure cookies
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+
+# ------------------------
+# ✅ Other Settings
+# ------------------------
+
+# Limitations on upload size for requests (e.g. for large files)
+DATA_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5 MB
+
+# Optional, but good for debugging purposes in development
+if DEBUG:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
