@@ -6,3 +6,4 @@ django-redis
 spacy
 gunicorn
 python-dotenv
+django-cors-headers

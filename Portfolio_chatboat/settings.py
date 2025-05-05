@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -48,7 +49,19 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    'corsheaders.middleware.CorsMiddleware',
 ]
+
+CORS_ALLOW_ALL_ORIGINS = False
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:8000",  # Local development
+    "http://127.0.0.1:8000",  # Sometimes this is used
+    "https://dhruv-portfolio-f5ux.onrender.com",  # Production frontend
+]
+
+CORS_ALLOW_CREDENTIALS = True  # If you're using cookies/sessions
+
 
 ROOT_URLCONF = "Portfolio_chatboat.urls"
 
