@@ -6,4 +6,3 @@ django-redis
 spacy
 gunicorn
 python-dotenv
-pip install google-generativeai
