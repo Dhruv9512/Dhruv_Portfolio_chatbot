@@ -22,3 +22,6 @@ def cheatapi(request):
     except Exception as error:
         print("Error:", error)  
         return JsonResponse({'error': str(error)})
+    
+def ping(request):
+    return JsonResponse({"status": "ok", "message": "The app is alive!"})

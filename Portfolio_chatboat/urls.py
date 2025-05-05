@@ -22,4 +22,5 @@ from . import views
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/", views.cheatapi, name="cheatapi"),
+    path('ping/', views.ping, name='ping'),
 ]
