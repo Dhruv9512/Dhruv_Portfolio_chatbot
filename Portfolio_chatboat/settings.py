@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     'corsheaders',  # CORS app
+    'django_extensions',  # For SSL/HTTPS in dev
 ]
 
 MIDDLEWARE = [
@@ -96,7 +97,9 @@ CORS_ALLOW_ALL_ORIGINS = False
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8000",  # Local development frontend
     "http://127.0.0.1:8000",  # Local development frontend
+    "http://127.0.0.1:8001",  # Local dev on alternate port
     "https://dhruv-portfolio-f5ux.onrender.com",  # Frontend hosted on Render
+    "https://dhruv-portfolio-chatbot.onrender.com",  # Backend hosted on Render (optional, remove if not needed)
 ]
 
 CORS_ALLOW_CREDENTIALS = True
