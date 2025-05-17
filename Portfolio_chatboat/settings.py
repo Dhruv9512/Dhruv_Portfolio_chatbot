@@ -1,23 +1,21 @@
 from pathlib import Path
 from corsheaders.defaults import default_headers
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# SECURITY WARNING: keep the secret key used in production secret!
+# === Set DEBUG True for local development, False for production ===
+# Change this before deployment
+DEBUG = True  # <-- Set False in production!
+
 SECRET_KEY = "django-insecure-6=6qqqefe8z@8_id2iw1t%8pb_@6q7q_ypd5+je11tn7jvgwhr"
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
-
 ALLOWED_HOSTS = [
-    'dhruv-portfolio-chatbot.onrender.com',  # Backend
-    'dhruv-portfolio-f5ux.onrender.com',     # Frontend
+    'dhruv-portfolio-chatbot.onrender.com',  # Backend production
+    'dhruv-portfolio-f5ux.onrender.com',     # Frontend production
     'localhost',
     '127.0.0.1',
 ]
 
-# Application definition
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -30,11 +28,11 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',  # CORS middleware should be first!
+    'corsheaders.middleware.CorsMiddleware',  # Must be first for CORS
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
-    "django.middleware.csrf.CsrfViewMiddleware",  # Keep CSRF middleware for other views
+    "django.middleware.csrf.CsrfViewMiddleware",  # Keep CSRF for other views
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
@@ -60,7 +58,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "Portfolio_chatboat.wsgi.application"
 
-# Database configuration
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
@@ -68,7 +65,6 @@ DATABASES = {
     }
 }
 
-# Password validation
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
@@ -76,77 +72,60 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 
-# Internationalization
 LANGUAGE_CODE = "en-us"
 TIME_ZONE = "UTC"
 USE_I18N = True
 USE_TZ = True
 
-# Static files
 STATIC_URL = "static/"
 
-# Default primary key field type
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# ------------------------
-# ✅ CORS Configuration
-# ------------------------
-
+# === CORS Settings ===
 CORS_ALLOW_ALL_ORIGINS = False
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:8000",  # Local development frontend
-    "http://127.0.0.1:8000",  # Local development frontend
-    "http://127.0.0.1:8001",  # Local dev on alternate port
-    "https://dhruv-portfolio-f5ux.onrender.com",  # Frontend hosted on Render
-    "https://dhruv-portfolio-chatbot.onrender.com",  # Backend hosted on Render (optional, remove if not needed)
+    "http://localhost:8000",      # Local frontend dev
+    "http://127.0.0.1:8000",      # Local frontend dev
+    "http://127.0.0.1:8001",      # Alternate port
+    "https://dhruv-portfolio-f5ux.onrender.com",
+    "https://dhruv-portfolio-chatbot.onrender.com",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
-
-# Add headers for CORS requests
-CORS_ALLOW_HEADERS = list(default_headers) + [
-    'X-CSRFToken',
-]
-
-# Expose headers to frontend
+CORS_ALLOW_HEADERS = list(default_headers) + ['X-CSRFToken']
 CORS_EXPOSE_HEADERS = ['Content-Type', 'X-CSRFToken']
 
-# ------------------------
-# ✅ CSRF Configuration
-# ------------------------
-
-# Trusted origins for CSRF (used when sending cookies for cross-origin requests)
+# === CSRF Settings ===
 CSRF_TRUSTED_ORIGINS = [
-    "https://dhruv-portfolio-f5ux.onrender.com",  # Frontend hosted on Render
+    "https://dhruv-portfolio-f5ux.onrender.com",
 ]
 
-# CSRF settings (optional if you use `@csrf_exempt` on your API)
-CSRF_COOKIE_SECURE = True
-CSRF_COOKIE_SAMESITE = 'Lax'
+# === SECURITY SETTINGS BASED ON DEBUG ===
+# Security settings based on DEBUG
+if DEBUG:
+    SECURE_SSL_REDIRECT = False
+    CSRF_COOKIE_SECURE = False
+    SESSION_COOKIE_SECURE = False
+    SESSION_COOKIE_HTTPONLY = True
+    SECURE_BROWSER_XSS_FILTER = False
+    SECURE_CONTENT_TYPE_NOSNIFF = False
+    X_FRAME_OPTIONS = 'SAMEORIGIN'
+else:
+    SECURE_SSL_REDIRECT = True
+    CSRF_COOKIE_SECURE = True
+    SESSION_COOKIE_SECURE = True
+    SESSION_COOKIE_HTTPONLY = True
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    X_FRAME_OPTIONS = 'DENY'
+    SECURE_HSTS_SECONDS = 31536000  # 1 year
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
 
-# ------------------------
-# ✅ Django Security Configuration
-# ------------------------
+# Max upload size 5MB
+DATA_UPLOAD_MAX_MEMORY_SIZE = 5242880
 
-# To protect against clickjacking
-X_FRAME_OPTIONS = 'DENY'
-
-# To use secure cookies (recommended in production)
-SECURE_SSL_REDIRECT = True
-
-# Default settings for secure cookies
-SECURE_BROWSER_XSS_FILTER = True
-SECURE_CONTENT_TYPE_NOSNIFF = True
-
-# ------------------------
-# ✅ Other Settings
-# ------------------------
-
-# Limitations on upload size for requests (e.g. for large files)
-DATA_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5 MB
-
-# Optional, but good for debugging purposes in development
 if DEBUG:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
@@ -154,9 +133,7 @@ LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-        },
+        'console': {'class': 'logging.StreamHandler'},
     },
     'root': {
         'handlers': ['console'],

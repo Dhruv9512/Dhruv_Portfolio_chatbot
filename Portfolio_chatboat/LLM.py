@@ -242,8 +242,8 @@ def chat_bot(user_input):
         # Save memory after processing
         save_memory(memory)
 
-        return JsonResponse({"response": response_text})
+        return response_text
 
     except Exception as e:
         print(f"Error in chat_bot: {e}")
-        return JsonResponse({"response": "Internal server error."}, status=500)
+        return f"Internal server error:- {e}"
