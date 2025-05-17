@@ -26,7 +26,6 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     'corsheaders',  # CORS app
-    'django_extensions',  # For SSL/HTTPS in dev
 ]
 
 MIDDLEWARE = [
