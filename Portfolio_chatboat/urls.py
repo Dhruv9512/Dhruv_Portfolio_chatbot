@@ -17,10 +17,10 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path
-from . import views
+from .views import CheatAPI, PingView
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("api/", views.cheatapi, name="cheatapi"),
-    path('ping/', views.ping, name='ping'),
+    path("api/", CheatAPI.as_view(), name="cheatapi"),
+    path('ping/', PingView.as_view(), name='ping'),
 ]

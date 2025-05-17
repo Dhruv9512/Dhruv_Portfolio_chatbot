@@ -1,16 +1,21 @@
 import json
 import logging
-from django.views.decorators.csrf import csrf_exempt
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
 from django.http import JsonResponse
-from .LLM import chat_bot
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
+from .LLM import chat_bot  # your chatbot function
 
 # Configure logger
 logger = logging.getLogger(__name__)
 
-@csrf_exempt
-def cheatapi(request):
-    try:
-        if request.method == "POST":
+@method_decorator(csrf_exempt, name='dispatch')
+class CheatAPI(APIView):
+
+    def post(self, request):
+        try:
             data = json.loads(request.body)
             message = data.get('message')
 
@@ -22,16 +27,15 @@ def cheatapi(request):
             logger.info(f"Bot response: {response}")
 
             return JsonResponse({'response': response})
-        else:
-            logger.warning(f"Invalid method {request.method} used.")
-            return JsonResponse({'error': 'Invalid HTTP method'}, status=405)
 
-    except Exception as error:
-        logger.error(f"Error in cheatapi: {error}", exc_info=True)
-        return JsonResponse({'error': str(error)}, status=500)
+        except Exception as error:
+            logger.error(f"Error in CheatAPI: {error}", exc_info=True)
+            return JsonResponse({'error': str(error)}, status=500)
 
 
-@csrf_exempt
-def ping(request):
-    logger.info("Ping received")
-    return JsonResponse({"status": "ok", "message": "The app is alive!"})
+@method_decorator(csrf_exempt, name='dispatch')
+class PingView(APIView):
+
+    def get(self, request):
+        logger.info("Ping received")
+        return JsonResponse({"status": "ok", "message": "The app is alive!"}, status=200)
