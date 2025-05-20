@@ -11,7 +11,7 @@ SECRET_KEY = "django-insecure-6=6qqqefe8z@8_id2iw1t%8pb_@6q7q_ypd5+je11tn7jvgwhr
 
 ALLOWED_HOSTS = [
     'dhruv-portfolio-chatbot.onrender.com',  # Backend production
-    'dhruv-portfolio-f5ux.onrender.com',     # Frontend production
+    'dhruv-portfolio-y8kt.onrender.com/',     # Frontend production
     'localhost',
     '127.0.0.1',
 ]
@@ -88,7 +88,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:8000",      # Local frontend dev
     "http://127.0.0.1:8000",      # Local frontend dev
     "http://127.0.0.1:8001",      # Alternate port
-    "https://dhruv-portfolio-f5ux.onrender.com",
+    "https://dhruv-portfolio-y8kt.onrender.com",
     "https://dhruv-portfolio-chatbot.onrender.com",
 ]
 
