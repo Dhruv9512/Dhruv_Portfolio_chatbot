@@ -98,7 +98,7 @@ CORS_EXPOSE_HEADERS = ['Content-Type', 'X-CSRFToken']
 
 # === CSRF Settings ===
 CSRF_TRUSTED_ORIGINS = [
-    "https://dhruv-portfolio-f5ux.onrender.com",
+    "https://dhruv-portfolio-y8kt.onrender.com",
 ]
 
 # === SECURITY SETTINGS BASED ON DEBUG ===
