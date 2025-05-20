@@ -20,7 +20,7 @@ HF_API_KEY = os.environ.get("HUGGINGFACEHUB_API_TOKEN")
 
 # Initialize Gemini model (used only for QA, not summarization)
 model = ChatGoogleGenerativeAI(
-    model="gemini-1.5-pro",
+    model="gemini-2.0-flash",
     temperature=0.7,
     google_api_key=os.environ.get("GOOGLE_API_KEY"),
 )
