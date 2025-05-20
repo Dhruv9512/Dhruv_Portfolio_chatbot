@@ -11,7 +11,7 @@ from langchain.schema import HumanMessage, AIMessage, SystemMessage, Document
 from langchain.memory import ConversationSummaryMemory
 from langchain.chains.question_answering import load_qa_chain
 from qdrant_client import QdrantClient
-from langchain_community.llms import HuggingFaceHub
+# from langchain_community.llms import HuggingFaceHub
 import pickle  
 
 # Load environment variables
@@ -19,44 +19,44 @@ load_dotenv()
 HF_API_KEY = os.environ.get("HUGGINGFACEHUB_API_TOKEN")
 
 # Initialize Gemini model (used only for QA, not summarization)
-# model = ChatGoogleGenerativeAI(
-#     model="gemini-1.5-pro",
-#     temperature=0.7,
-#     google_api_key=os.environ.get("GOOGLE_API_KEY"),
-# )
+model = ChatGoogleGenerativeAI(
+    model="gemini-1.5-pro",
+    temperature=0.7,
+    google_api_key=os.environ.get("GOOGLE_API_KEY"),
+)
 
 os.environ["HUGGINGFACEHUB_API_TOKEN"] = HF_API_KEY
 
 # Initialize the model using LangChain's HuggingFaceHub
-model = HuggingFaceHub(
-    repo_id="HuggingFaceH4/zephyr-7b-beta",
-    model_kwargs={
-        "temperature": 0.7,
-        "max_new_tokens": 256,
-        "top_p": 0.95,
-        "return_full_text": False
-    }
-)
+# model = HuggingFaceHub(
+#     repo_id="HuggingFaceH4/zephyr-7b-beta",
+#     model_kwargs={
+#         "temperature": 0.7,
+#         "max_new_tokens": 256,
+#         "top_p": 0.95,
+#         "return_full_text": False
+#     }
+# )
 
 
 # Hugging Face embadding model
-def embeddings(normalized_text):
-    headers = {
-        "Content-Type": "application/json",
-        "Authorization": f"Bearer {HF_API_KEY}"
-    }
+# def embeddings(normalized_text):
+#     headers = {
+#         "Content-Type": "application/json",
+#         "Authorization": f"Bearer {HF_API_KEY}"
+#     }
 
-    url = "https://api-inference.huggingface.co/pipeline/feature-extraction/sentence-transformers/paraphrase-mpnet-base-v2"
+#     url = "https://api-inference.huggingface.co/pipeline/feature-extraction/sentence-transformers/paraphrase-mpnet-base-v2"
 
-    payload = {
-        "inputs": normalized_text
-    }
-    response = requests.post(
-        url,
-        headers=headers,
-        json=payload,
-    )
-    return response
+#     payload = {
+#         "inputs": normalized_text
+#     }
+#     response = requests.post(
+#         url,
+#         headers=headers,
+#         json=payload,
+#     )
+#     return response
 
 # Initialize QA Chain
 def get_chain():
@@ -86,14 +86,14 @@ def embed_query(text):
     for attempt in range(5):
         try:
         
-            # embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
-            # response = embeddings.embed_query(normalized_text)
-            # embedding = response
-            # embedding_cache[normalized_text] = embedding  
+            embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
+            response = embeddings.embed_query(normalized_text)
+            embedding = response
+            embedding_cache[normalized_text] = embedding  
 
-            response = embeddings(normalized_text)
-            response.raise_for_status()
-            embedding = response.json()[0]
+            # response = embeddings(normalized_text)
+            # response.raise_for_status()
+            # embedding = response.json()[0]
 
             # Save the cache periodically (e.g., every 10 embeddings)
             if len(embedding_cache) % 10 == 0:

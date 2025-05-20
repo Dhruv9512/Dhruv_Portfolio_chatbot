@@ -8,3 +8,4 @@ gunicorn
 python-dotenv
 django-cors-headers
 djangorestframework
+langchain-community
