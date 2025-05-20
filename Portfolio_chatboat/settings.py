@@ -11,7 +11,7 @@ SECRET_KEY = "django-insecure-6=6qqqefe8z@8_id2iw1t%8pb_@6q7q_ypd5+je11tn7jvgwhr
 
 ALLOWED_HOSTS = [
     'dhruv-portfolio-chatbot.onrender.com',  # Backend production
-    'dhruv-portfolio-y8kt.onrender.com/',     # Frontend production
+    'dhruv-portfolio-y8kt.onrender.com',     # Frontend production
     'localhost',
     '127.0.0.1',
 ]
@@ -91,10 +91,16 @@ CORS_ALLOWED_ORIGINS = [
     "https://dhruv-portfolio-y8kt.onrender.com",
     "https://dhruv-portfolio-chatbot.onrender.com",
 ]
+CSRF_COOKIE_SECURE = False  
+CSRF_COOKIE_SAMESITE = 'Strict'
 
 CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOW_HEADERS = list(default_headers) + ['X-CSRFToken']
-CORS_EXPOSE_HEADERS = ['Content-Type', 'X-CSRFToken']
+CORS_EXPOSE_HEADERS = ['Content-Type', 'Authorization']
+CORS_ALLOW_HEADERS = [
+    'content-type',
+    'authorization',
+    'x-csrftoken',
+]
 
 # === CSRF Settings ===
 CSRF_TRUSTED_ORIGINS = [
